@@ -1,5 +1,5 @@
 module Web.Scraper (
-  scrapeChannel, displayVideo
+  scrapeChannel, showVideo
 ) where
 
 import           Control.Applicative
@@ -17,8 +17,8 @@ data Video = Video {
   time     :: TL.Text
 } deriving (Show, Eq)
 
-displayVideo :: Video -> TL.Text
-displayVideo vid = TL.unwords [
+showVideo :: Video -> TL.Text
+showVideo vid = TL.unwords [
   TL.pack "<li>",
   TL.concat [time vid, TL.pack ":"],
   TL.concat [TL.pack "<a href='https://youtube.com", url vid, TL.pack "'>"],
