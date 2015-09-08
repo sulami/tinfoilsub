@@ -21,14 +21,14 @@ data Video = Video {
 
 displayVideo :: Video -> TL.Text
 displayVideo vid = TL.unwords [
-  TL.pack . show $ time vid,
-  TL.pack ":",
+  TL.pack "<li>",
+  TL.concat [time vid, TL.pack ":"],
+  TL.concat [TL.pack "<a href='https://youtube.com", url vid, TL.pack "'>"],
   uploader vid,
   TL.pack "-",
   title vid,
   TL.concat [ TL.pack "[", len vid, TL.pack "]" ],
-  TL.pack ":",
-  url vid ]
+  TL.pack "</a></li>" ]
 
 scrapeChannel :: String -> IO (Maybe [Video])
 scrapeChannel id = do
