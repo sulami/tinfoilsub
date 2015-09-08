@@ -2,6 +2,7 @@ module Web.Scraper (
   scrapeChannel, displayVideo
 ) where
 
+import           Control.Applicative
 import qualified Data.ByteString.Lazy as BL
 import           Data.Text.Lazy
 import           Data.Text.Lazy.Encoding (decodeUtf8)
@@ -12,8 +13,8 @@ import           Text.HTML.Scalpel
 
 data Video = Video {
   uploader :: Text,
-  title    :: Text
-  -- id       :: Text,
+  title    :: Text,
+  url      :: Text
   -- length   :: Int,
   -- time     :: Int
 } deriving (Show, Eq)
@@ -21,7 +22,9 @@ data Video = Video {
 displayVideo :: Video -> Text
 displayVideo vid = Data.Text.Lazy.unwords [uploader vid,
   pack "-",
-  title vid]
+  title vid,
+  pack ":",
+  url vid]
 
 scrapeChannel :: String -> IO (Maybe [Video])
 scrapeChannel id = do
@@ -49,6 +52,8 @@ scrapePage page = scrapeStringLike page videos
 
     video :: Text -> Scraper BL.ByteString Video
     video uploader = do
-      title <- fmap decodeUtf8 $ text $ "a" @: [hasClass "yt-ui-ellipsis"]
-      return $ Video uploader title
+      let textBox = "a" @: [hasClass "yt-ui-ellipsis"]
+      title <- decodeUtf8 <$> text textBox
+      url   <- decodeUtf8 <$> attr "href" textBox
+      return $ Video uploader title url
 
