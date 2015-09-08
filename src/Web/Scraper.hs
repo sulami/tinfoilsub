@@ -14,17 +14,19 @@ import           Text.HTML.Scalpel
 data Video = Video {
   uploader :: Text,
   title    :: Text,
-  url      :: Text
-  -- length   :: Int,
+  url      :: Text,
+  len      :: Text
   -- time     :: Int
 } deriving (Show, Eq)
 
 displayVideo :: Video -> Text
-displayVideo vid = Data.Text.Lazy.unwords [uploader vid,
+displayVideo vid = Data.Text.Lazy.unwords [
+  uploader vid,
   pack "-",
   title vid,
+  Data.Text.Lazy.concat [ pack "[", len vid, pack "]" ],
   pack ":",
-  url vid]
+  url vid ]
 
 scrapeChannel :: String -> IO (Maybe [Video])
 scrapeChannel id = do
@@ -55,5 +57,6 @@ scrapePage page = scrapeStringLike page videos
       let textBox = "a" @: [hasClass "yt-ui-ellipsis"]
       title <- decodeUtf8 <$> text textBox
       url   <- decodeUtf8 <$> attr "href" textBox
-      return $ Video uploader title url
+      len   <- decodeUtf8 <$> text ("span" @: [hasClass "video-time"] // "span")
+      return $ Video uploader title url len
 
