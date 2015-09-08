@@ -4,6 +4,7 @@ module Web.Scraper (
 
 import           Control.Applicative
 import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString.Lazy.Char8 as BLC8
 import qualified Data.Text.Lazy as TL
 import           Data.Text.Lazy.Encoding (decodeUtf8)
 
@@ -15,13 +16,13 @@ data Video = Video {
   title    :: TL.Text,
   url      :: TL.Text,
   len      :: TL.Text,
-  time     :: TL.Text
+  time     :: Int
 } deriving (Show, Eq)
 
 showVideo :: Video -> TL.Text
 showVideo vid = TL.unwords [
   TL.pack "<li>",
-  TL.concat [time vid, TL.pack ":"],
+  TL.pack (show $ time vid),
   TL.concat [TL.pack "<a href='https://youtube.com", url vid, TL.pack "'>"],
   uploader vid,
   TL.pack "-",
@@ -53,7 +54,20 @@ scrapeChannel id = scrapeURLWithOpts requestHeader (channelURL id) videos
       title <- decodeUtf8 <$> text textBox
       url   <- decodeUtf8 <$> attr "href" textBox
       len   <- decodeUtf8 <$> text ("span" @: [hasClass "video-time"] // "span")
-      time  <- decodeUtf8 . last <$>
-                 texts ("ul" @: [hasClass "yt-lockup-meta-info"] // "li")
-      return $ Video uploader title url len time
+      time  <- last <$> texts ("ul" @: [hasClass "yt-lockup-meta-info"] // "li")
+      return $ Video uploader title url len $ parseTime time
+
+    parseTime :: BL.ByteString -> Int
+    parseTime t = case words (BLC8.unpack t) of
+                    h : ["hour",  "ago"] -> read h
+                    h : ["hours", "ago"] -> read h
+                    d : ["day",   "ago"] -> read d * 24
+                    d : ["days",  "ago"] -> read d * 24
+                    w : ["week",  "ago"] -> read w * 24 * 7
+                    w : ["weeks", "ago"] -> read w * 24 * 7
+                    m : ["month", "ago"] -> read m * 24 * 30
+                    m : ["months","ago"] -> read m * 24 * 30
+                    y : ["year",  "ago"] -> read y * 24 * 30 * 12
+                    y : ["years", "ago"] -> read y * 24 * 30 * 12
+                    _                    -> 0
 
