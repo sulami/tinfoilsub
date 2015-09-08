@@ -5,6 +5,7 @@ module Web.Scraper (
 import           Control.Applicative
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Char8 as BLC8
+import           Data.Ord (comparing)
 import qualified Data.Text.Lazy as TL
 import           Data.Text.Lazy.Encoding (decodeUtf8)
 
@@ -18,6 +19,9 @@ data Video = Video {
   len      :: TL.Text,
   time     :: Int
 } deriving (Show, Eq)
+
+instance Ord Video where
+  compare = comparing time
 
 showVideo :: Video -> TL.Text
 showVideo vid = TL.unwords [
