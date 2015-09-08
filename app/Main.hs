@@ -1,6 +1,6 @@
 module Main where
 
-import Web
+import Web.Server
 
 main :: IO ()
 main = runServer

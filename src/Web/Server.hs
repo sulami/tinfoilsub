@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Web (
+module Web.Server (
   runServer
-  ) where
+) where
 
 import           Web.Scotty
 
