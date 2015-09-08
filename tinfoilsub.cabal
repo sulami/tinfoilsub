@@ -24,6 +24,7 @@ library
                      , lens
                      , bytestring
                      , text
+                     , transformers
   default-language:    Haskell2010
 
 executable tinfoilsub-exe

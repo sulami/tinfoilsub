@@ -1,5 +1,5 @@
 module Web.Scraper (
-  scrapeChannel
+  scrapeChannel, Video (..)
 ) where
 
 import           Data.Text.Lazy
@@ -39,6 +39,6 @@ scrapePage page = scrapeStringLike page videos
 
     video :: Scraper B.ByteString Video
     video = do
-      title <- fmap decodeUtf8 $ text $ "a" @: [hasClass "yt-uix-title-link"]
+      title <- fmap decodeUtf8 $ text $ "a" @: [hasClass "yt-ui-ellipsis"]
       return $ Video title
 
