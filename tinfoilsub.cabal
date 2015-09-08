@@ -20,6 +20,10 @@ library
   build-depends:       base >= 4.7 && < 5
                      , scotty
                      , scalpel
+                     , wreq
+                     , lens
+                     , bytestring
+                     , text
   default-language:    Haskell2010
 
 executable tinfoilsub-exe
