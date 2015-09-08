@@ -1,29 +1,34 @@
 module Web.Scraper (
-  scrapeChannel, Video (..)
+  scrapeChannel, displayVideo
 ) where
 
+import qualified Data.ByteString.Lazy as BL
 import           Data.Text.Lazy
 import           Data.Text.Lazy.Encoding (decodeUtf8)
-import qualified Data.ByteString.Lazy as B
 
 import           Control.Lens ((^.))
 import           Network.Wreq (get, responseBody)
 import           Text.HTML.Scalpel
 
 data Video = Video {
-  -- uploader :: Text,
+  uploader :: Text,
   title    :: Text
   -- id       :: Text,
   -- length   :: Int,
   -- time     :: Int
 } deriving (Show, Eq)
 
+displayVideo :: Video -> Text
+displayVideo vid = Data.Text.Lazy.unwords [uploader vid,
+  pack "-",
+  title vid]
+
 scrapeChannel :: String -> IO (Maybe [Video])
 scrapeChannel id = do
   page <- videoPage id
   return $ scrapePage page
 
-videoPage :: String -> IO B.ByteString
+videoPage :: String -> IO BL.ByteString
 videoPage id = do
   res <- get $ channelUrl id
   return $ res ^. responseBody
@@ -31,14 +36,19 @@ videoPage id = do
     channelUrl :: String -> String
     channelUrl id = "https://youtube.com/user/" ++ id ++ "/videos"
 
-scrapePage :: B.ByteString -> Maybe [Video]
+scrapePage :: BL.ByteString -> Maybe [Video]
 scrapePage page = scrapeStringLike page videos
   where
-    videos :: Scraper B.ByteString [Video]
-    videos = chroots ("li" @: [hasClass "channels-content-item"]) video
+    videos :: Scraper BL.ByteString [Video]
+    videos = do
+      uploader <- fmap decodeUtf8 getUploader
+      chroots ("li" @: [hasClass "channels-content-item"]) $ video uploader
 
-    video :: Scraper B.ByteString Video
-    video = do
+    getUploader :: Scraper BL.ByteString BL.ByteString
+    getUploader = text $ "a" @: [hasClass "branded-page-header-title-link"]
+
+    video :: Text -> Scraper BL.ByteString Video
+    video uploader = do
       title <- fmap decodeUtf8 $ text $ "a" @: [hasClass "yt-ui-ellipsis"]
-      return $ Video title
+      return $ Video uploader title
 

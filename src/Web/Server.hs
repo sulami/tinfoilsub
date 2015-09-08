@@ -19,6 +19,6 @@ runServer = scotty 3000 $ do
     res <- liftIO $ scrapeChannel id
     case res of
       Nothing     -> text "Hmm... invalid id?"
-      Just videos -> text . TL.unlines . map title $ videos
+      Just videos -> text . TL.unlines . map displayVideo $ videos
   notFound $
     text "Four-Oh-Four"
