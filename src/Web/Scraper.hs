@@ -7,8 +7,6 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.Text.Lazy as TL
 import           Data.Text.Lazy.Encoding (decodeUtf8)
 
-import           Control.Lens ((^.))
-import           Network.Wreq (get, responseBody)
 import           Text.HTML.Scalpel
 
 data Video = Video {
@@ -31,21 +29,11 @@ displayVideo vid = TL.unwords [
   TL.pack "</a></li>" ]
 
 scrapeChannel :: String -> IO (Maybe [Video])
-scrapeChannel id = do
-  page <- videoPage id
-  return $ scrapePage page
-
-videoPage :: String -> IO BL.ByteString
-videoPage id = do
-  res <- get $ channelUrl id
-  return $ res ^. responseBody
+scrapeChannel id = scrapeURL (channelURL id) videos
   where
-    channelUrl :: String -> String
-    channelUrl id = "https://youtube.com/user/" ++ id ++ "/videos"
+    channelURL :: String -> String
+    channelURL id = "https://youtube.com/user/" ++ id ++ "/videos"
 
-scrapePage :: BL.ByteString -> Maybe [Video]
-scrapePage page = scrapeStringLike page videos
-  where
     videos :: Scraper BL.ByteString [Video]
     videos = do
       uploader <- fmap decodeUtf8 getUploader
