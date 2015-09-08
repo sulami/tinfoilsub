@@ -16,11 +16,13 @@ data Video = Video {
   title    :: TL.Text,
   url      :: TL.Text,
   len      :: TL.Text,
-  -- time     :: TL.Text
+  time     :: TL.Text
 } deriving (Show, Eq)
 
 displayVideo :: Video -> TL.Text
 displayVideo vid = TL.unwords [
+  TL.pack . show $ time vid,
+  TL.pack ":",
   uploader vid,
   TL.pack "-",
   title vid,
@@ -58,5 +60,7 @@ scrapePage page = scrapeStringLike page videos
       title <- decodeUtf8 <$> text textBox
       url   <- decodeUtf8 <$> attr "href" textBox
       len   <- decodeUtf8 <$> text ("span" @: [hasClass "video-time"] // "span")
-      return $ Video uploader title url len
+      time  <- decodeUtf8 . last <$>
+                 texts ("ul" @: [hasClass "yt-lockup-meta-info"] // "li")
+      return $ Video uploader title url len time
 
