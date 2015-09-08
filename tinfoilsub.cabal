@@ -23,6 +23,7 @@ library
                      , bytestring
                      , text
                      , transformers
+                     , curl
   default-language:    Haskell2010
 
 executable tinfoilsub-exe

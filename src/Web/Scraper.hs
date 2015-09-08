@@ -7,6 +7,7 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.Text.Lazy as TL
 import           Data.Text.Lazy.Encoding (decodeUtf8)
 
+import           Network.Curl.Opts (CurlOption (CurlHttpHeaders))
 import           Text.HTML.Scalpel
 
 data Video = Video {
@@ -29,8 +30,12 @@ showVideo vid = TL.unwords [
   TL.pack "</a></li>" ]
 
 scrapeChannel :: String -> IO (Maybe [Video])
-scrapeChannel id = scrapeURL (channelURL id) videos
+scrapeChannel id = scrapeURLWithOpts requestHeader (channelURL id) videos
   where
+    requestHeader :: [CurlOption]
+    requestHeader = [CurlHttpHeaders [ "Host: www.youtube.com",
+                                       "Accept-Language: en-us,en;q=0.5" ]]
+
     channelURL :: String -> String
     channelURL id = "https://youtube.com/user/" ++ id ++ "/videos"
 
