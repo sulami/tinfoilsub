@@ -13,11 +13,11 @@ import           Network.Curl.Opts (CurlOption (CurlHttpHeaders))
 import           Text.HTML.Scalpel
 
 data Video = Video {
-  uploader :: TL.Text,
-  title    :: TL.Text,
-  url      :: TL.Text,
-  len      :: TL.Text,
-  thumb    :: TL.Text,
+  uploader :: !TL.Text,
+  title    :: !TL.Text,
+  url      :: !TL.Text,
+  len      :: !TL.Text,
+  thumb    :: !TL.Text,
   time     :: Int
 } deriving (Show, Eq)
 
