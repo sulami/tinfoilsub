@@ -1,0 +1,27 @@
+body {
+  font-family: sans;
+  margin: 0;
+}
+
+ol {
+  list-style: none;
+  margin: auto;
+  max-width: 90%;
+}
+
+li {
+  float: left;
+  height: 240px;
+  overflow-y: hidden;
+  width: 320px;
+}
+
+li:hover > a {
+  color: black;
+}
+
+a {
+  color: #666;
+  text-decoration: none;
+}
+

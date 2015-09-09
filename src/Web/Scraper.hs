@@ -26,15 +26,13 @@ instance Ord Video where
 
 showVideo :: Video -> TL.Text
 showVideo vid = TL.unwords [
-  TL.pack "<li>",
-  TL.pack (show $ time vid),
   TL.concat [TL.pack "<a href='https://youtube.com", url vid, TL.pack "'>"],
-  TL.concat [TL.pack "<img src='", thumb vid, TL.pack "' />"],
+  TL.concat [TL.pack "<img src='", thumb vid, TL.pack "' /><br />"],
+  TL.concat [ TL.pack "[", len vid, TL.pack "]" ],
   uploader vid,
   TL.pack "-",
   title vid,
-  TL.concat [ TL.pack "[", len vid, TL.pack "]" ],
-  TL.pack "</a></li>" ]
+  TL.pack "</a>" ]
 
 scrapeChannel :: String -> IO (Maybe [Video])
 scrapeChannel id = scrapeURLWithOpts requestHeader (channelURL id) videos
