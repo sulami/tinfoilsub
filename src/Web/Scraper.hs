@@ -17,6 +17,7 @@ data Video = Video {
   title    :: TL.Text,
   url      :: TL.Text,
   len      :: TL.Text,
+  thumb    :: TL.Text,
   time     :: Int
 } deriving (Show, Eq)
 
@@ -28,6 +29,7 @@ showVideo vid = TL.unwords [
   TL.pack "<li>",
   TL.pack (show $ time vid),
   TL.concat [TL.pack "<a href='https://youtube.com", url vid, TL.pack "'>"],
+  TL.concat [TL.pack "<img src='", thumb vid, TL.pack "' />"],
   uploader vid,
   TL.pack "-",
   title vid,
@@ -58,8 +60,9 @@ scrapeChannel id = scrapeURLWithOpts requestHeader (channelURL id) videos
       title <- decodeUtf8 <$> text textBox
       url   <- decodeUtf8 <$> attr "href" textBox
       len   <- decodeUtf8 <$> text ("span" @: [hasClass "video-time"] // "span")
+      thumb <- decodeUtf8 <$> attr "src" "img"
       time  <- last <$> texts ("ul" @: [hasClass "yt-lockup-meta-info"] // "li")
-      return $ Video uploader title url len $ parseTime time
+      return $ Video uploader title url len thumb $ parseTime time
 
     parseTime :: BL.ByteString -> Int
     parseTime t = case words (BLC8.unpack t) of
