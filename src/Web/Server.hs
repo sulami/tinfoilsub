@@ -21,11 +21,7 @@ runServer :: [String] -> IO ()
 runServer channels = scotty 3000 $ do
   get "/" $ do
     videos <- fmap (sort . concatMaybe) . liftIO $ mapM scrapeChannel channels
-    html . renderHtml $ do
-      H.head $
-        H.link H.! A.rel "stylesheet" H.! A.href "/style.css"
-      H.body $
-        H.ol . forM_ videos $ H.li . H.preEscapedToHtml . showVideo
+    html $ renderVideos videos
   get "/style.css" $
     file "static/style.css"
   get "/:id" $ do
@@ -33,13 +29,16 @@ runServer channels = scotty 3000 $ do
     res <- liftIO $ scrapeChannel id
     case res of
       Nothing     -> text "Hmm... invalid id?"
-      Just videos -> html . renderHtml $ do
-        H.head $
-          H.link H.! A.rel "stylesheet" H.! A.href "/style.css"
-        H.body $
-          H.ol . forM_ videos $ H.li . H.preEscapedToHtml . showVideo
+      Just videos -> html $ renderVideos videos
   notFound $
     text "Four-Oh-Four"
+
+renderVideos :: [Video] -> TL.Text
+renderVideos videos = renderHtml $ do
+  H.head $
+    H.link H.! A.rel "stylesheet" H.! A.href "/style.css"
+  H.body $
+    H.ol . forM_ videos $ H.li . H.preEscapedToHtml . showVideo
 
 concatMaybe :: [Maybe [a]] -> [a]
 concatMaybe [] = []

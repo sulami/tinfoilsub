@@ -1,5 +1,5 @@
 module Web.Scraper (
-  scrapeChannel, showVideo
+  scrapeChannel, showVideo, Video
 ) where
 
 import           Control.Applicative
