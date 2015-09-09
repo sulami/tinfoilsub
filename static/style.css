@@ -3,6 +3,10 @@ body {
   margin: 0;
 }
 
+h1 {
+  text-align: center;
+}
+
 ol {
   list-style: none;
   margin: auto;

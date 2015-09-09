@@ -35,9 +35,11 @@ runServer channels = scotty 3000 $ do
 
 renderVideos :: [Video] -> TL.Text
 renderVideos videos = renderHtml $ do
-  H.head $
+  H.head $ do
+    H.title "TinfoilSub"
     H.link H.! A.rel "stylesheet" H.! A.href "/style.css"
-  H.body $
+  H.body $ do
+    H.h1 "TinfoilSub"
     H.ol . forM_ videos $ H.li . H.preEscapedToHtml . showVideo
 
 concatMaybe :: [Maybe [a]] -> [a]
