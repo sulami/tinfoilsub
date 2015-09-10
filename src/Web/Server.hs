@@ -23,7 +23,7 @@ runServer channels = scotty 3000 $ do
   get "/" $ do
     videos <- fmap (sort . concatMaybe) . liftIO . sequence $
                 parMap rpar scrapeChannel channels
-    html $ renderVideos videos
+    html . renderVideos $ take 50 videos
   get "/style.css" $
     file "static/style.css"
   notFound $
