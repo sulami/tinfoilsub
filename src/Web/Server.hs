@@ -26,12 +26,6 @@ runServer channels = scotty 3000 $ do
     html $ renderVideos videos
   get "/style.css" $
     file "static/style.css"
-  get "/:id" $ do
-    id <- param "id"
-    res <- liftIO $ scrapeChannel id
-    case res of
-      Nothing     -> text "Hmm... invalid id?"
-      Just videos -> html $ renderVideos videos
   notFound $
     text "Four-Oh-Four"
 
