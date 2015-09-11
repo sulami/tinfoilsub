@@ -4,9 +4,9 @@ module Web.Server (
   runServer
 ) where
 
-import           Control.Monad (forM_, sequence)
+import           Control.Concurrent.Async (mapConcurrently)
+import           Control.Monad (forM_)
 import           Control.Monad.IO.Class (liftIO)
-import           Control.Parallel.Strategies (parMap, rpar)
 import           Data.List (sort)
 import           Data.Maybe (fromJust)
 import qualified Data.Text.Lazy as TL
@@ -21,8 +21,8 @@ import           Web.Scraper
 runServer :: [String] -> IO ()
 runServer channels = scotty 3000 $ do
   get "/" $ do
-    videos <- fmap (sort . concatMaybe) . liftIO . sequence $
-                parMap rpar scrapeChannel channels
+    videos <- fmap (sort . concatMaybe) . liftIO $
+                mapConcurrently scrapeChannel channels
     html . renderVideos $ take 50 videos
   get "/style.css" $
     file "static/style.css"

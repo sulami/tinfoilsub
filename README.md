@@ -11,7 +11,7 @@ Features
 - Scrapes a list of channel pages for videos
 - Displays them on a single local page
 - Is sort of REST
-- Uses all your available cores for parsing
+- Uses all your CPUs/cores to fetch and parse concurrently
 
 Building
 --------
