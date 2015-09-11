@@ -28,7 +28,6 @@ Usage
 -----
 
 TinfoilSub uses a list of channels that are placed inside of `channels`,
-newline-separated like the example list. It starts listening on
-`localhost:3000` and will display the latest videos uploaded by channels on
-said list.
+a newline-separated list of names. It starts listening on `localhost:3000` and
+will display the latest videos uploaded by channels on said list.
 
