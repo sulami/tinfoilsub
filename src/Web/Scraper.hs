@@ -26,8 +26,8 @@ instance Ord Video where
 
 showVideo :: Video -> TL.Text
 showVideo vid = TL.unwords [
-  TL.concat [TL.pack "<a target='_blank' href='https://youtube.com",
-             url vid, TL.pack "'>"],
+  TL.concat [TL.pack "<a target='_blank' href='/video/",
+             last . TL.split (== '=') $ url vid, TL.pack "'>"],
   TL.concat [TL.pack "<img src='", thumb vid, TL.pack "' /><br />"],
   TL.concat [ TL.pack "[", len vid, TL.pack "]" ],
   uploader vid,
