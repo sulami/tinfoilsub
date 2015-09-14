@@ -1,6 +1,7 @@
 body {
   font-family: sans;
   margin: 0;
+  padding: 0;
 }
 
 h1 {
@@ -27,5 +28,11 @@ li:hover > a {
 a {
   color: #666;
   text-decoration: none;
+}
+
+iframe {
+  border: none;
+  height: 100%;
+  width: 100%;
 }
 

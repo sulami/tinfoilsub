@@ -24,6 +24,9 @@ runServer channels = scotty 3000 $ do
     videos <- fmap (sort . concatMaybe) . liftIO $
                 mapConcurrently scrapeChannel channels
     html . renderVideos $ take 50 videos
+  get "/video/:id" $ do
+    vid <- param "id" :: ActionM String
+    html $ renderVideo vid
   get "/style.css" $
     file "static/style.css"
   notFound $
@@ -37,6 +40,14 @@ renderVideos videos = renderHtml $ do
   H.body $ do
     H.h1 "TinfoilSub"
     H.ol . forM_ videos $ H.li . H.preEscapedToHtml . showVideo
+
+renderVideo :: String -> TL.Text
+renderVideo vid = renderHtml $ do
+  H.head $ do
+    H.title "TinfoilSub"
+    H.link H.! A.rel "stylesheet" H.! A.href "/style.css"
+  let url = "<iframe src='https://youtube.com/embed/" ++ vid ++ "'></iframe>"
+  H.body $ H.preEscapedToHtml url
 
 concatMaybe :: [Maybe [a]] -> [a]
 concatMaybe [] = []
