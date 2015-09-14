@@ -12,6 +12,7 @@ Features
 - Displays them on a single local page
 - Is sort of REST
 - Uses all your CPUs/cores to fetch and parse concurrently
+- Includes a minimal video viewing page without comments and the like
 
 Building
 --------
