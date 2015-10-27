@@ -8,7 +8,6 @@ import           Control.Concurrent.Async (mapConcurrently)
 import           Control.Monad (forM_)
 import           Control.Monad.IO.Class (liftIO)
 import           Data.List (sort)
-import           Data.Maybe (fromJust)
 import qualified Data.Text.Lazy as TL
 
 import           Text.Blaze.Html.Renderer.Text
