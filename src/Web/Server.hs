@@ -16,13 +16,14 @@ import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 import           Web.Scotty
 
+import           Data.ConfigParser
 import           Web.Scraper
 
-runServer :: [String] -> IO ()
-runServer channels = scotty 3000 $ do
+runServer :: [Feed] -> IO ()
+runServer feeds = scotty 3000 $ do
   get "/" $ do
-    videos <- fmap (sort . concatMaybe) . liftIO $
-                mapConcurrently scrapeChannel channels
+    videos <- fmap (sort . concat) . liftIO $
+                mapConcurrently scrapeChannel feeds
     html . renderVideos $ take 50 videos
   get "/video/:id" $ do
     vid <- param "id" :: ActionM String
@@ -48,10 +49,4 @@ renderVideo vid = renderHtml $ do
     H.link H.! A.rel "stylesheet" H.! A.href "/style.css"
   let url = "<iframe src='https://youtube.com/embed/" ++ vid ++ "'></iframe>"
   H.body $ H.preEscapedToHtml url
-
-concatMaybe :: [Maybe [a]] -> [a]
-concatMaybe [] = []
-concatMaybe (x:xs) = case x of
-                       Nothing -> concatMaybe xs
-                       Just v -> v ++ concatMaybe xs
 

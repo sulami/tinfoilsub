@@ -1,5 +1,5 @@
 module Data.ConfigParser (
-  parseConfig
+  parseConfig, Feed (..), Filter (..)
 ) where
 
 import           Data.Char (toLower)

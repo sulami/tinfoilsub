@@ -12,6 +12,8 @@ import           Data.Text.Lazy.Encoding (decodeUtf8)
 import           Network.Curl.Opts (CurlOption (CurlHttpHeaders))
 import           Text.HTML.Scalpel
 
+import           Data.ConfigParser
+
 data Video = Video {
   uploader :: !TL.Text,
   title    :: !TL.Text,
@@ -35,8 +37,9 @@ showVideo vid = TL.unwords [
   title vid,
   TL.pack "</a>" ]
 
-scrapeChannel :: String -> IO (Maybe [Video])
-scrapeChannel id = scrapeURLWithOpts requestHeader (channelURL id) videos
+scrapeChannel :: Feed -> IO [Video]
+scrapeChannel feed = filterVideos feed <$> scrapeURLWithOpts requestHeader
+                      (channelURL $ name feed) videos
   where
     requestHeader :: [CurlOption]
     requestHeader = [CurlHttpHeaders [ "Host: www.youtube.com",
@@ -76,4 +79,15 @@ scrapeChannel id = scrapeURLWithOpts requestHeader (channelURL id) videos
                     y : ["year",  "ago"] -> read y * 24 * 30 * 12
                     y : ["years", "ago"] -> read y * 24 * 30 * 12
                     _                    -> 0
+
+filterVideos :: Feed -> Maybe [Video] -> [Video]
+filterVideos _ Nothing     = []
+filterVideos f (Just vids) = filter (applyFilters $ filters f) vids
+  where
+    applyFilters :: [Filter] -> Video -> Bool
+    applyFilters fs vid = all (applyFilter vid) fs
+
+    applyFilter :: Video -> Filter -> Bool
+    applyFilter vid (Filter w s) = w == TL.isInfixOf (TL.pack s)
+                                        (TL.toLower $ title vid)
 

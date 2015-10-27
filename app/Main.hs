@@ -1,8 +1,10 @@
 module Main where
 
-import Web.Server
+import           Data.ConfigParser
+import           Web.Server
 
 main :: IO ()
 main = do
-  channels <- lines <$> readFile "channels"
-  runServer channels
+  feeds <- parseConfig <$> readFile "channels"
+  runServer feeds
+
