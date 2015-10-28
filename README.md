@@ -9,6 +9,7 @@ Features
 --------
 
 - Scrapes a list of channel pages for videos
+- Black-/whitelist filters for video-titles
 - Displays them on a single local page
 - Is sort of REST
 - Uses all your CPUs/cores to fetch and parse concurrently
