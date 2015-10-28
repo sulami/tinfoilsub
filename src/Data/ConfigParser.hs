@@ -15,7 +15,7 @@ data Feed = Feed
   } deriving (Show)
 
 parseConfig :: String -> [Feed]
-parseConfig = map parseEntry . lines
+parseConfig = map parseEntry . filter (not . null) . lines
 
 parseEntry :: String -> Feed
 parseEntry line = let whole = words $ map toLower line
