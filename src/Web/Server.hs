@@ -7,7 +7,7 @@ module Web.Server (
 import           Control.Concurrent.Async (mapConcurrently)
 import           Control.Monad (forM_)
 import           Control.Monad.IO.Class (liftIO)
-import           Data.List (sort)
+import           Data.List (nub, sort)
 import qualified Data.Text.Lazy as TL
 
 import           Text.Blaze.Html.Renderer.Text
@@ -21,7 +21,7 @@ import           Web.Scraper
 runServer :: [Feed] -> IO ()
 runServer feeds = scotty 3000 $ do
   get "/" $ do
-    videos <- fmap (sort . concat) . liftIO $
+    videos <- fmap (sort . nub . concat) . liftIO $
                 mapConcurrently scrapeChannel feeds
     html . renderVideos $ take 50 videos
   get "/video/:id" $ do
