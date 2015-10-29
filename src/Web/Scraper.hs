@@ -68,17 +68,19 @@ scrapeChannel feed = filterVideos feed <$> scrapeURLWithOpts requestHeader
 
     parseTime :: BL.ByteString -> Int
     parseTime t = case words (BLC8.unpack t) of
-                    h : ["hour",  "ago"] -> read h
-                    h : ["hours", "ago"] -> read h
-                    d : ["day",   "ago"] -> read d * 24
-                    d : ["days",  "ago"] -> read d * 24
-                    w : ["week",  "ago"] -> read w * 24 * 7
-                    w : ["weeks", "ago"] -> read w * 24 * 7
-                    m : ["month", "ago"] -> read m * 24 * 30
-                    m : ["months","ago"] -> read m * 24 * 30
-                    y : ["year",  "ago"] -> read y * 24 * 30 * 12
-                    y : ["years", "ago"] -> read y * 24 * 30 * 12
-                    _                    -> 0
+                    m : ["minute", "ago"] -> read m
+                    m : ["minutes","ago"] -> read m
+                    h : ["hour",   "ago"] -> read h * 60
+                    h : ["hours",  "ago"] -> read h * 60
+                    d : ["day",    "ago"] -> read d * 60 * 24
+                    d : ["days",   "ago"] -> read d * 60 * 24
+                    w : ["week",   "ago"] -> read w * 60 * 24 * 7
+                    w : ["weeks",  "ago"] -> read w * 60 * 24 * 7
+                    m : ["month",  "ago"] -> read m * 60 * 24 * 30
+                    m : ["months", "ago"] -> read m * 60 * 24 * 30
+                    y : ["year",   "ago"] -> read y * 60 * 24 * 30 * 12
+                    y : ["years",  "ago"] -> read y * 60 * 24 * 30 * 12
+                    _                     -> 9001
 
 filterVideos :: Feed -> Maybe [Video] -> [Video]
 filterVideos _ Nothing     = []
